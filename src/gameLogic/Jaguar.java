@@ -12,7 +12,7 @@ package gameLogic;
  */
 public class Jaguar extends Piece {
   
-  public Jaguar(int id) {
+  public Jaguar(String id) {
     super(id);
   }
   

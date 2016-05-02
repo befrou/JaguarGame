@@ -30,31 +30,44 @@ public class BoardPosition {
     this.position = position;
   }
   
+  /* returns piece that is occupying this board position */
   public Piece getPiece() {
     return this.piece;
   }
   
+  /* set the piece that is occupying this board position */
   public void setPiece(Piece piece) {
     this.piece = piece;
   }
   
+  /* return an object Position whith coordinates x and y */
   public Position getPosition() {
     return this.position;
   }
   
+  /* returns an adjacent board position pointed by the direction */
   public BoardPosition getAdjacentPosition(Direction direction) {
     return this.adjacentPositions.get(direction);
   }
   
+  /* returns an array with all adjacent board positions */
   public ArrayList<BoardPosition> getAdjacentPositions() {
     ArrayList<BoardPosition> array = new ArrayList<BoardPosition>(this.adjacentPositions.values());
     return array;
   }
+  
+  /* returns an array whith all possible directions from this board position */
   public ArrayList<Direction> getAvailableDirections() {
      ArrayList<Direction> array = new ArrayList<Direction>(this.adjacentPositions.keySet());
      return array;
   }
   
+  /* verify if the direction passed by parameter is available */
+  public boolean availableDirection(Direction direction) {
+    return adjacentPositions.containsKey(direction);
+  }
+  
+  /* add a set key, value to the hash map */
   public void addAdjacentPosition(Direction direction, BoardPosition boardPosition) {
     this.adjacentPositions.put(direction, boardPosition);
   }

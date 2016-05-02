@@ -36,18 +36,12 @@ public class Board {
         Position pos = new Position(x, y);
         BoardPosition bPos = new BoardPosition(null, pos);
         
-        boardPositions.add(new BoardPosition(null, pos));             
+        boardPositions.add(bPos);             
         positions.put(pos, bPos);        
       }
-    }/*
-    int index = 0;
-    for (int x = 0; x < Board.COLUMNS; x++) {
-      for (int y = 0; y < Board.ROWS; y++) {
-        positions.put(new Position(x, y), boardPositions.get(index));
-        index++;
-      }
     }
-    */
+ 
+    /* missing positions */
     boardPositions.add(new BoardPosition(null, new Position(1, 5))); //25
     boardPositions.add(new BoardPosition(null, new Position(2, 5))); //26
     boardPositions.add(new BoardPosition(null, new Position(3, 5))); //27
@@ -68,17 +62,17 @@ public class Board {
     boardPositions.get(0).addAdjacentPosition(Direction.Right, boardPositions.get(1));
     boardPositions.get(0).addAdjacentPosition(Direction.Down, boardPositions.get(5));
     boardPositions.get(0).addAdjacentPosition(Direction.DownRight, boardPositions.get(6));
-   // 
+ 
     boardPositions.get(1).addAdjacentPosition(Direction.Left, boardPositions.get(0));
     boardPositions.get(1).addAdjacentPosition(Direction.Right, boardPositions.get(2));
     boardPositions.get(1).addAdjacentPosition(Direction.Down, boardPositions.get(6));
-    //
+    
     boardPositions.get(2).addAdjacentPosition(Direction.Left, boardPositions.get(1));
     boardPositions.get(2).addAdjacentPosition(Direction.DownLeft, boardPositions.get(6));
     boardPositions.get(2).addAdjacentPosition(Direction.Down, boardPositions.get(7));
     boardPositions.get(2).addAdjacentPosition(Direction.DownRight, boardPositions.get(8));
     boardPositions.get(2).addAdjacentPosition(Direction.Right, boardPositions.get(3));
-    //
+   
     boardPositions.get(3).addAdjacentPosition(Direction.Left, boardPositions.get(2));
     boardPositions.get(3).addAdjacentPosition(Direction.Right, boardPositions.get(4));
     boardPositions.get(3).addAdjacentPosition(Direction.Down, boardPositions.get(8));
@@ -114,7 +108,7 @@ public class Board {
     boardPositions.get(8).addAdjacentPosition(Direction.Left, boardPositions.get(7));
     boardPositions.get(8).addAdjacentPosition(Direction.UpLeft, boardPositions.get(2));
     
-    //
+   
     boardPositions.get(9).addAdjacentPosition(Direction.Up, boardPositions.get(4));
     boardPositions.get(9).addAdjacentPosition(Direction.Left, boardPositions.get(8));
     boardPositions.get(9).addAdjacentPosition(Direction.Down, boardPositions.get(14));
@@ -233,17 +227,18 @@ public class Board {
     boardPositions.get(30).addAdjacentPosition(Direction.UpLeft, boardPositions.get(27));
   }
   
+  /* return all board positions */
   public ArrayList<BoardPosition> getBoardPositions() {
     return boardPositions;
   }
-  
+ 
   public String toString() {
     
     String output = "";
     int row = 0, column = 0;
     
-    for (int y = Board.ROWS - 1; y >= 0; y--) {
-      for (int x = 0; x < Board.COLUMNS; x++) {
+    for (int x = Board.ROWS - 1; x >= 0; x--) {
+      for (int y = 0; y < Board.COLUMNS; y++) {
         BoardPosition aux = positions.get(new Position(x, y));
         Piece p;
         if(aux != null) {
@@ -252,41 +247,41 @@ public class Board {
           p = null;
         }
 
-        if(p != null) {
-          output += "[" + p.getId() + "]";
+        if(p != null) {     
+             output += "[" + p.getId() + "]";
+          
         }
         else {
-           if (x == 5 && (y == 0 || y == 4))
+           if (y == 5 && (x == 0 || x == 4)) {
             output += "    ";
-          else {
-            if (x == 6 && (y == 1 || y == 3))
-              output += " |";
-            else
-              output += "[  ]";
-          }
+           }  else {
+               if (y == 6 && (x == 1 || x == 3))
+                  output += " |";
+               else
+                  output += "[  ]";
+            }
         }
         
-        if (x < 4) {
+        if (y < 4) {
           output += "--";
         }
         else {
-          if (y == 2 && x < 6)
+          if (x == 2 && y < 6)
             output += "--";
           else
             output += "  ";
-        }
-         
-        output += "\n";
-        
-        switch (y) {
+        }       
+      }
+       output += "\n";
+      switch (x) {
           case 4: output += " |  \\  |  /  |  \\  |  /  |        /  |\n"; break;
           case 3: output += " |  /  |  \\  |  /  |  \\  |  /        |\n"; break;
           case 2: output += " |  \\  |  /  |  \\  |  /  |  \\        |\n"; break;
           case 1: output += " |  /  |  \\  |  /  |  \\  |        \\  |\n"; break;
           default: break;
         }
-      }
     }
     return output;       
   }
+
 }

@@ -11,7 +11,7 @@ package gameLogic;
  * @author bruno
  */
 public class Dog extends Piece {
-  public Dog(int id ) {
+  public Dog(String id ) {
     super(id);
   }
 }

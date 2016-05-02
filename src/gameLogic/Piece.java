@@ -12,14 +12,14 @@ package gameLogic;
  */
 public class Piece {
   
-  protected int id;
+  protected String id;
   
-  public Piece(int id) {
+  public Piece(String id) {
     this.id = id;
   }
   
-  public int getId() {
-    return id;
+  public String getId() {
+    return this.id;
   }
   
   public void move() {

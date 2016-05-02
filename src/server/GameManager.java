@@ -18,30 +18,23 @@ import utilities.Direction;
  */
 public class GameManager {
  
-  private Map<Integer, BoardPosition> pieces; /* Associates piece's id whit its current location */
+  private Map<String, BoardPosition> pieces; /* Associates piece's id whit its current location */
   private Board board;
   
   private int eatenDogs;
-  private static final int jaguarId = 12;
+  private static final String jaguarId = "JA";
   
   public GameManager() {
     board = new Board();
     pieces = new HashMap<>();
-    initializePieces();
-    
+    initializePieces();    
   }
   
   
   public void startMatch() {
-    /*
-    do {
-      
-      
-    } while(!(dogsWinningCondition()) && !(jaguarWinningCondition()));
-    if(eatenDogs == 5) System.out.println("Player 1 - Jaguar Wins!");
-      else
-        System.out.println("Player 2 - Dog Wins!");
-    */
+     while(true) {
+     
+     }
   }
   
   /* Player 1 turn */
@@ -56,14 +49,17 @@ public class GameManager {
     Jaguar jaguar = (Jaguar)currentPosition.getPiece();
  
     do {
+      System.out.println("Choose an action: (1 - Move) (2 - Eat)");
+    
       
+      nextPosition = moveTo(jaguarId, direction);
       System.out.println("Jaguar can't perform this move.");
       
     } while((nextPosition = moveTo(jaguarId, direction)) == null);
     
     nextPosition.setPiece(jaguar);
     currentPosition.setPiece(null);
-    
+   
     pieces.replace(jaguarId, currentPosition, nextPosition);
   }
   
@@ -71,23 +67,31 @@ public class GameManager {
   public void player2(int id) {
     System.out.print("Player 2 - Dogs ");
 
-    Direction direction = null;
+    Direction direction;
+    String strId;
     
-    BoardPosition currentPosition = pieces.get(id);
+    if(id < 10) {
+      strId = "0" + id;
+    } else {
+      strId = "" + id;
+    }
+    
+    BoardPosition currentPosition = pieces.get(strId);
     BoardPosition nextPosition;
     
     Dog dog = (Dog)currentPosition.getPiece();
  
     do {
+      direction = promptPlayer2();
       
-      System.out.println("Dog can't perform this move.");
+      if(direction == null) System.out.println("Dog can't perform this move.");
       
-    } while((nextPosition = moveTo(id, direction)) == null);
+    } while((nextPosition = moveTo(strId, direction)) == null);
     
     nextPosition.setPiece(dog);
     currentPosition.setPiece(null);
     
-    pieces.replace(id, currentPosition, nextPosition);
+    pieces.replace(strId, currentPosition, nextPosition);
   }  
   
   
@@ -110,49 +114,69 @@ public class GameManager {
   
  
   /* Moves a piece */
-  public BoardPosition moveTo(int id, Direction dir) {
+  public BoardPosition moveTo(String id, Direction dir) {
     BoardPosition targetPosition = pieces.get(id).getAdjacentPosition(dir);
     return targetPosition;
   }
   
   /* set pieces position on its respective places */
   public void initializePieces() {
+    ArrayList<BoardPosition> array = board.getBoardPositions();
+    int dogId = 1;
+    int arrayIndex = 0;
     
-    ArrayList<BoardPosition> boardPositions = board.getBoardPositions();
+    String strId = "";
+    int jaguarInitPos = 12;
     
-    /* Maps the pieces ids to its respective positions */
-    int id = 1;
-    int aux = 0;
-    for(int i = 0; i < 5; i++) {
-      if(i == 12) {
-        pieces.put(id++, boardPositions.get(i));
-        continue;
+    for(int row = 0; row < Board.ROWS; row++) {
+      for(int offset = 0; offset < 3; offset++) {  
+        
+        strId = "";
+        
+        if(dogId < 10) strId = "0" + dogId;
+               else strId += dogId;
+        
+        if((arrayIndex + offset) == 12) continue;  /* this position belongs to Jaguar, so don' */ 
+                        
+        pieces.put(strId, array.get(arrayIndex + offset));
+        pieces.get(strId).setPiece(new Dog(strId));
+      
+        dogId++;
       }
-      pieces.put(id++, boardPositions.get(aux));
-      pieces.put(id++, boardPositions.get(aux+1));
-      pieces.put(id++, boardPositions.get(aux+2));
-      aux+=5;
+      arrayIndex += 5;  /* jumps to the next row */
+    }
+    pieces.put(jaguarId, array.get(jaguarInitPos));
+    pieces.get(jaguarId).setPiece(new Jaguar(jaguarId));
+  }
+  
+  public Direction promptPlayer1() {
+    System.out.println("Type 1 to move or 2 to eat");
+    int action = Integer.parseInt(new Scanner(System.in).next());
+    
+    if(action == 1) {
+      
     }
     
-    /* Create dogs and jaguars and put then on its respective positions */
-    for(id =  1; id <= 15; id++) {
-      if(id == 12) continue;
-       
-      pieces.get(id).setPiece(new Dog(id));
-    }
-    pieces.get(12).setPiece(new Jaguar(id));
+    return null;
   }
   
   public Direction promptPlayer2() {
        System.out.println("Which dog do you want to move:");
        int id = Integer.parseInt(new Scanner(System.in).next());
        
-       if(id == 12 || id > 15) return null;
+       String strId;
+       // if(id == 12 || id > 15) return null;
+       if(id < 10) {
+        strId = "0" + id;
+       } else {
+        strId = "" + id;
+       }
        
-       Dog dog = (Dog) pieces.get(id).getPiece();
-       ArrayList<Direction> availableDirections = pieces.get(id).getAvailableDirections();
        
-       System.out.println("Available Directions:");
+      // Dog dog = (Dog) pieces.get(strId).getPiece();
+       ArrayList<Direction> availableDirections = pieces.get(strId).getAvailableDirections();
+       
+       System.out.print("Available Directions: ");
        for(Direction dir : availableDirections) {
          System.out.print(dir + " ");
        }
