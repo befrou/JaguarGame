@@ -245,32 +245,35 @@ public class Board {
 
         if(aux != null) {
          p = aux.getPiece();
-         if(p != null) {     
-             output += "[" + p.getId() + "]";
+         if(p == null) {     
+             output += "..";
          }
          else{
-            output += "[  ]";
+            output += "" + p.getId() + "";
          }
          if (y < 4 || (x == 2 && y < 6)) {
           output += "--";
          }       
          else {
-              output += "   ";
+              output += "  ";
           } 
       }
       else if (y == 5 && (x == 0 || x == 4)) {
              output += "    ";
       }
+        
+        if (y == 6 && (x == 1 || x == 3)) output += " |";
     }
-       output += "\n";
-       switch (x) {
-          case 0: output += " |  \\  |  /  |  \\  |  /  |        /  |\n"; break;
-          case 1: output += " |  /  |  \\  |  /  |  \\  |  /        |\n"; break;
-          case 2: output += " |  \\  |  /  |  \\  |  /  |  \\        |\n"; break;
-          case 3: output += " |  /  |  \\  |  /  |  \\  |        \\  |\n"; break;
-          default: break;
-       }
-  }
+      if (x == 0) 
+       output += "\n | \\ | / | \\ | / |     / |\n";
+      else if (x == 1)
+        output += "\n | / | \\ | / | \\ | / |   |\n";
+      else if (x == 2)
+        output += "\n | \\ | / | \\ | / | \\ |   |\n";
+      else if (x == 3)
+        output += "\n | / | \\ | / | \\ |     \\ |\n";
+    }
+      
       return output;       
   
   }
