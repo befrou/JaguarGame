@@ -31,48 +31,79 @@ public class GameManager {
   
   
   public void startMatch() {
-     while(true) {
-       System.out.println(board.toString());
-       player2();
-     }
+    String winner = "";
+    eatenDogs = 4;
+    
+    do {
+      System.out.println(board.toString());
+      player1();
+      
+      if(jaguarWinningCondition()) {
+         winner = "Jaguar";
+         break;
+      }
+      
+      System.out.println(board.toString());
+      player2();
+      
+      if(dogsWinningCondition()) {
+        winner = "Dogs";
+        break;
+      }
+          
+    } while(true);
+    
+    System.out.println(winner);
   }
   
   /* Player 1 turn */
   public void player1() {
     System.out.print("Player 1 - Jaguar ");
-
-    Direction direction = null;
     
-    BoardPosition currentPosition = pieces.get(jaguarId);
-    BoardPosition nextPosition;
+    BoardPosition currentPos = pieces.get("JA");
+            
+    Direction dir = CommandPrompt.chooseDirection(currentPos);
     
-    Jaguar jaguar = (Jaguar)currentPosition.getPiece();
- 
-    do {
-      System.out.println("Choose an action: (1 - Move) (2 - Eat)");
+    BoardPosition targetPos = currentPos.getAdjacentPosition(dir);
     
-      
-      nextPosition = moveTo(jaguarId, direction);
-      System.out.println("Jaguar can't perform this move.");
-      
-    } while((nextPosition = moveTo(jaguarId, direction)) == null);
+    if(targetPos.getPiece() != null)
+      eatDog(currentPos, targetPos, dir);
+    else
+      move(currentPos, dir);
     
-    nextPosition.setPiece(jaguar);
-    currentPosition.setPiece(null);
-   
-    pieces.replace(jaguarId, currentPosition, nextPosition);
   }
   
    /* Player 2 turn */
   public void player2() {
+    System.out.print("Player 2 - Dogs ");
+    
     String id = CommandPrompt.chooseDog(pieces);
     BoardPosition currentPos = pieces.get(id);
-    System.out.println("currentPos : " + currentPos.getPosition().getX() + ": " + currentPos.getPosition().getY());
-    
+      
     Direction dir = CommandPrompt.chooseDirection(currentPos);
     
     move(currentPos, dir);
-  }  
+  } 
+  
+  public void eatDog(BoardPosition currentPos, BoardPosition victimPos, Direction dir) {
+    Piece currentPiece = currentPos.getPiece();
+    Piece victimPiece = victimPos.getPiece();
+    
+    BoardPosition newPos = victimPos.getAdjacentPosition(dir);
+    
+    /* New Jaguar position */
+    newPos.setPiece(currentPiece);
+    
+    /* Previous Jaguar Position. Now there is no piece on it */
+    pieces.replace(currentPiece.getId(), currentPos, newPos);
+    currentPos.setPiece(null);
+    
+    /* Dog was eaten by the Jaguar, so take him out of the board */
+    pieces.replace(victimPiece.getId(), victimPos, null);
+    victimPos.setPiece(null);
+    eatenDogs++;
+    
+  }
   
   public void move(BoardPosition currentPos, Direction dir) {
     BoardPosition targetPos = currentPos.getAdjacentPosition(dir);

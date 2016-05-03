@@ -47,7 +47,10 @@ public class BoardPosition {
   
   /* returns an adjacent board position pointed by the direction */
   public BoardPosition getAdjacentPosition(Direction direction) {
-    return this.adjacentPositions.get(direction);
+    if(this.adjacentPositions.containsKey(direction))
+      return this.adjacentPositions.get(direction);
+    
+    return null;  
   }
   
   /* returns an array with all adjacent board positions */

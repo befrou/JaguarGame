@@ -48,20 +48,32 @@ public class CommandPrompt {
   public static Direction chooseDirection(BoardPosition currentPos) {
     
     boolean validDirection = false;
+    boolean isJaguar = "JA".equals(currentPos.getPiece().getId());
     
     ArrayList<Direction> directions = currentPos.getAvailableDirections();
-    ArrayList<Direction> validDirections = new ArrayList<Direction>();
+    ArrayList<Direction> validDirections = new ArrayList<>();
     
-    for(Direction dir : directions) {
-            //System.out.println("possibleDir " + dir);
+    if(!isJaguar) {
+      for(Direction dir : directions) {
         if(currentPos.getAdjacentPosition(dir).getPiece() == null) {
           validDirections.add(dir);
-        }
-        else{
-          //System.out.println(dir+ " Not null" + currentPos.getAdjacentPosition(dir).getPiece().getId());
-        }
+        } 
+      }  
+    } else {
+       for(Direction dir : directions) {
+        BoardPosition targetPos = currentPos.getAdjacentPosition(dir);
         
-    } 
+        if(targetPos.getPiece() == null) {         
+          validDirections.add(dir);        
+        } else {
+          BoardPosition newPos = targetPos.getAdjacentPosition(dir);
+          
+          if(newPos != null && newPos.getPiece() == null) {
+            validDirections.add(dir);
+          }
+        }
+      }  
+    }
     
     int index = 0;
     int direction;
@@ -70,10 +82,12 @@ public class CommandPrompt {
             
     do {
       System.out.println("Choose one of the directions  bellow to move");
+           
       for(Direction dir : validDirections) {
         System.out.print(index + "- " + dir + "  ");
         index++;
-      } 
+      }
+            
       direction = Integer.parseInt(new Scanner(System.in).next());
       choosenDir = validDirections.get(direction);
       
@@ -84,8 +98,7 @@ public class CommandPrompt {
       index = 0;
       
     } while(!validDirection);
-    System.out.println("choosenDir" + choosenDir);
+   
     return choosenDir;
   }
-  
 }
