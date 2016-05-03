@@ -1,1 +1,6 @@
 /build/
+/JaguarServer/nbproject/private/
+/JaguarClient/nbproject/private/
+/JaguarShared/nbproject/private/
+/JaguarShared/build/
+/JaguarServer/build/

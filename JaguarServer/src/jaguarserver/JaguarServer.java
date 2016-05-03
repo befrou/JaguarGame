@@ -3,27 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package utilities;
+package jaguarserver;
 
 /**
  *
  * @author bruno
  */
-public enum Direction {
-  Up(1),
-  UpLeft(2),
-  UpRight(3),
-  Down(4),
-  DownLeft(5),
-  DownRight(6),
-  Left(7),
-  Right(8);
-  
-  
-  private int val;
-  
-  Direction(int val) {
-    this.val = val;
+public class JaguarServer {
+
+  /**
+   * @param args the command line arguments
+   */
+  public static void main(String[] args) {
+    // TODO code application logic here
   }
   
 }

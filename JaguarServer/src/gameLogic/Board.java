@@ -68,17 +68,17 @@ public class Board {
     boardPositions.get(1).addAdjacentPosition(Direction.Down, boardPositions.get(6));
     
     boardPositions.get(2).addAdjacentPosition(Direction.Left, boardPositions.get(1));
+    boardPositions.get(2).addAdjacentPosition(Direction.Right, boardPositions.get(3));
     boardPositions.get(2).addAdjacentPosition(Direction.DownLeft, boardPositions.get(6));
     boardPositions.get(2).addAdjacentPosition(Direction.Down, boardPositions.get(7));
     boardPositions.get(2).addAdjacentPosition(Direction.DownRight, boardPositions.get(8));
-    boardPositions.get(2).addAdjacentPosition(Direction.Right, boardPositions.get(3));
    
     boardPositions.get(3).addAdjacentPosition(Direction.Left, boardPositions.get(2));
     boardPositions.get(3).addAdjacentPosition(Direction.Right, boardPositions.get(4));
     boardPositions.get(3).addAdjacentPosition(Direction.Down, boardPositions.get(8));
     
     boardPositions.get(4).addAdjacentPosition(Direction.Left, boardPositions.get(3));
-    boardPositions.get(4).addAdjacentPosition(Direction.DownLeft, boardPositions.get(7));
+    boardPositions.get(4).addAdjacentPosition(Direction.DownLeft, boardPositions.get(8));
     boardPositions.get(4).addAdjacentPosition(Direction.Down, boardPositions.get(9));
     
     boardPositions.get(5).addAdjacentPosition(Direction.Up, boardPositions.get(0));
@@ -220,8 +220,8 @@ public class Board {
     boardPositions.get(28).addAdjacentPosition(Direction.DownLeft, boardPositions.get(25));
     
     boardPositions.get(29).addAdjacentPosition(Direction.Up, boardPositions.get(28));
-    boardPositions.get(29).addAdjacentPosition(Direction.Down, boardPositions.get(26));
-    boardPositions.get(29).addAdjacentPosition(Direction.Left, boardPositions.get((30)));
+    boardPositions.get(29).addAdjacentPosition(Direction.Down, boardPositions.get(30));
+    boardPositions.get(29).addAdjacentPosition(Direction.Left, boardPositions.get((26)));
     
     boardPositions.get(30).addAdjacentPosition(Direction.Up, boardPositions.get(29));
     boardPositions.get(30).addAdjacentPosition(Direction.UpLeft, boardPositions.get(27));
@@ -237,51 +237,43 @@ public class Board {
     String output = "";
     int row = 0, column = 0;
     
-    for (int x = Board.ROWS - 1; x >= 0; x--) {
+    for (int x = 0; x <= Board.ROWS - 1; x++) {
       for (int y = 0; y < Board.COLUMNS; y++) {
         BoardPosition aux = positions.get(new Position(x, y));
         Piece p;
+        //System.out.println("x:"+x + " y:"+y + "aux" + aux);
+
         if(aux != null) {
          p = aux.getPiece();
-        } else {
-          p = null;
-        }
-
-        if(p != null) {     
+         if(p != null) {     
              output += "[" + p.getId() + "]";
-          
-        }
-        else {
-           if (y == 5 && (x == 0 || x == 4)) {
-            output += "    ";
-           }  else {
-               if (y == 6 && (x == 1 || x == 3))
-                  output += " |";
-               else
-                  output += "[  ]";
-            }
-        }
-        
-        if (y < 4) {
+         }
+         else{
+            output += "[  ]";
+         }
+         if (y < 4 || (x == 2 && y < 6)) {
           output += "--";
-        }
-        else {
-          if (x == 2 && y < 6)
-            output += "--";
-          else
-            output += "  ";
-        }       
+         }       
+         else {
+              output += "   ";
+          } 
       }
-       output += "\n";
-      switch (x) {
-          case 4: output += " |  \\  |  /  |  \\  |  /  |        /  |\n"; break;
-          case 3: output += " |  /  |  \\  |  /  |  \\  |  /        |\n"; break;
-          case 2: output += " |  \\  |  /  |  \\  |  /  |  \\        |\n"; break;
-          case 1: output += " |  /  |  \\  |  /  |  \\  |        \\  |\n"; break;
-          default: break;
-        }
+      else if (y == 5 && (x == 0 || x == 4)) {
+             output += "    ";
+      }
     }
-    return output;       
+       output += "\n";
+       switch (x) {
+          case 0: output += " |  \\  |  /  |  \\  |  /  |        /  |\n"; break;
+          case 1: output += " |  /  |  \\  |  /  |  \\  |  /        |\n"; break;
+          case 2: output += " |  \\  |  /  |  \\  |  /  |  \\        |\n"; break;
+          case 3: output += " |  /  |  \\  |  /  |  \\  |        \\  |\n"; break;
+          default: break;
+       }
   }
+      return output;       
+  
+  }
+  
 
 }

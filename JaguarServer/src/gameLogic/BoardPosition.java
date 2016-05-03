@@ -52,13 +52,21 @@ public class BoardPosition {
   
   /* returns an array with all adjacent board positions */
   public ArrayList<BoardPosition> getAdjacentPositions() {
-    ArrayList<BoardPosition> array = new ArrayList<BoardPosition>(this.adjacentPositions.values());
+    ArrayList<BoardPosition> array = new ArrayList();
+    
+    for(BoardPosition pos : adjacentPositions.values()) {
+      array.add(pos);
+    }
     return array;
   }
   
   /* returns an array whith all possible directions from this board position */
   public ArrayList<Direction> getAvailableDirections() {
-     ArrayList<Direction> array = new ArrayList<Direction>(this.adjacentPositions.keySet());
+    ArrayList<Direction> array = new ArrayList<>();
+     
+    for(Direction dir : adjacentPositions.keySet()) {
+      array.add(dir);
+    }
      return array;
   }
   
