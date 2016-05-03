@@ -22,7 +22,7 @@ public class GameManager {
   private Board board;
   
   private int eatenDogs;
-  private static final String jaguarId = "JA";
+  private static final String jaguarId = " J";
   
   public GameManager() {
     board = new Board();
