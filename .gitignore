@@ -6,3 +6,5 @@
 /JaguarServer/build/
 /JaguarShared/dist/
 /JaguarServer/dist/
+/JaguarClient/build/
+/JaguarClient/dist/

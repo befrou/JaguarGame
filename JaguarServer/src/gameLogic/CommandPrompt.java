@@ -8,7 +8,6 @@ package gameLogic;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
-import utilities.*;
 
 /**
  *
@@ -48,7 +47,7 @@ public class CommandPrompt {
   public static Direction chooseDirection(BoardPosition currentPos) {
     
     boolean validDirection = false;
-    boolean isJaguar = "JA".equals(currentPos.getPiece().getId());
+    boolean isJaguar = " J".equals(currentPos.getPiece().getId());
     
     ArrayList<Direction> directions = currentPos.getAvailableDirections();
     ArrayList<Direction> validDirections = new ArrayList<>();
@@ -74,6 +73,8 @@ public class CommandPrompt {
         }
       }  
     }
+    
+    if(validDirections.isEmpty() && !isJaguar) return null;
     
     int index = 0;
     int direction;

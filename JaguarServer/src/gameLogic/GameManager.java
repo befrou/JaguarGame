@@ -3,14 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server;
+package gameLogic;
 
-import gameLogic.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import utilities.Direction;
 
 /**
  *
@@ -18,8 +16,8 @@ import utilities.Direction;
  */
 public class GameManager {
  
-  private Map<String, BoardPosition> pieces; /* Associates piece's id whit its current location */
-  private Board board;
+  private final Map<String, BoardPosition> pieces; /* Associates piece's id whit its current location */
+  private final Board board;
   
   private int eatenDogs;
   private static final String jaguarId = " J";
@@ -60,7 +58,7 @@ public class GameManager {
   public void player1() {
     System.out.print("Player 1 - Jaguar ");
     
-    BoardPosition currentPos = pieces.get("JA");
+    BoardPosition currentPos = pieces.get(" J");
             
     Direction dir = CommandPrompt.chooseDirection(currentPos);
     
@@ -75,13 +73,18 @@ public class GameManager {
   
    /* Player 2 turn */
   public void player2() {
+    Direction dir;
+    BoardPosition currentPos;
+    
     System.out.print("Player 2 - Dogs ");
     
-    String id = CommandPrompt.chooseDog(pieces);
-    BoardPosition currentPos = pieces.get(id);
-      
-    Direction dir = CommandPrompt.chooseDirection(currentPos);
-    
+    do {
+      String id = CommandPrompt.chooseDog(pieces);
+      currentPos = pieces.get(id);
+
+      dir = CommandPrompt.chooseDirection(currentPos);
+      System.out.println("Dog is Stuck!!! Choose another one! \n\n");
+    } while(dir == null);
     move(currentPos, dir);
   } 
   
