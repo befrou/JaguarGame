@@ -35,6 +35,7 @@ public class GameManager {
     do {
       System.out.println(board.toString());
       player1();
+      System.out.println("\n\n");
       
       if(jaguarWinningCondition()) {
          winner = "Jaguar";
@@ -43,6 +44,7 @@ public class GameManager {
       
       System.out.println(board.toString());
       player2();
+      System.out.println("\n\n");
       
       if(dogsWinningCondition()) {
         winner = "Dogs";
@@ -68,7 +70,6 @@ public class GameManager {
       eatDog(currentPos, targetPos, dir);
     else
       move(currentPos, dir);
-    
   }
   
    /* Player 2 turn */

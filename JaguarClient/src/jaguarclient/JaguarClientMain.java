@@ -12,16 +12,18 @@ import java.rmi.RemoteException;
  * @author bruno
  */
 public class JaguarClientMain {
-  public static void main(String[] args) throws RemoteException {  
+  public static void main(String[] args) throws RemoteException, InterruptedException {  
     
-    
+   
     if (args.length != 2) {
       System.out.println("The entry should be -> (host) (name)");
       System.exit(1);
-    }
-    String server = args[0];
+    } else {
+      String server = args[0];
     
-    JaguarClient clientGame = new JaguarClient(server);
-    clientGame.initClientGame(args[1]);
+      JaguarClient clientGame = new JaguarClient(server);
+      clientGame.initClientGame(args[1]);
+    }
+    
   }
 }

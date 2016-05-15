@@ -29,8 +29,8 @@ public class UserAlocation {
   
   /* initializer UserAlocation attributes */
   public void init(int capacity) {
-    users = new ArrayList<>();
-    lastId = 0;
+    this.users = new ArrayList<>();
+    this.lastId = 0;
     this.capacity = capacity;
   }
   
@@ -46,7 +46,7 @@ public class UserAlocation {
   /* Register User */
   public User alocateUser(String username) throws InterruptedException {
     mutex.acquire();
-    User newUser = new User(username, ++lastId);
+    User newUser = new User(username, lastId++);
     users.add(newUser);
     mutex.release();
     
@@ -76,10 +76,12 @@ public class UserAlocation {
   }
   
   public int getTotalUsersAlocated() throws InterruptedException {
+    
     mutex.acquire();
-    int i = users.size();
+    int numUsers = users.size();
     mutex.release();
-    return i;
+  
+    return numUsers;
   }
   
   public void startMatch() {

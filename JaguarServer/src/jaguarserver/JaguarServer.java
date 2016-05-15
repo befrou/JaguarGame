@@ -20,13 +20,14 @@ public class JaguarServer extends UnicastRemoteObject implements JaguarServerInt
   private final AlocationManager alocManager;
   
   public JaguarServer() throws RemoteException {  
-    alocManager = AlocationManager.getInstance();
-    alocManager.init();
+    this.alocManager = AlocationManager.getInstance();
+    this.alocManager.init();
   }
 
   @Override
   public int registerPlayer(String username) throws RemoteException { 
-    try {   
+    
+    try {
       return this.alocManager.registerPlayer(username);
     } catch(Exception e) {
       throw new RemoteException(e.getMessage());
@@ -34,13 +35,15 @@ public class JaguarServer extends UnicastRemoteObject implements JaguarServerInt
   }
   
   @Override
-  public boolean hasOpponent(int userId) {
+  public boolean isVacant(int userId) {
     boolean has = false;
+    System.out.println("\nHAS OPPONNENT");
     try {
-      has = this.alocManager.verifyUserMatchUp(userId);
+      has = this.alocManager.userMatchAvailable(userId);
     } catch (InterruptedException ex) {
       Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
     }
+    
     return has;
   }
 

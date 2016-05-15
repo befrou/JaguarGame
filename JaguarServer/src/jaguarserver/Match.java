@@ -21,16 +21,18 @@ public class Match {
   
   private boolean available;
   
-  public Match(User user, int id) {
-    this.user1 = user;
+  public Match(int id) {
+    this.user1 = null;
     this.user2 = null;
     this.id = id;
     this.game = new GameManager();
+    this.turn = 0;
     
     this.available = true;
   }
   
   public void startMatch() {
+    this.game.initializePieces();
     this.game.startMatch();
   }
   
@@ -64,5 +66,13 @@ public class Match {
   
   public GameManager getMatch() {
     return this.game;
+  }
+  
+  public int getTurn() {
+    return this.turn;
+  }
+  
+  public void setTurn(int turn) {
+    this.turn = turn;
   }
 }

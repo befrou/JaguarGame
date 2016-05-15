@@ -16,6 +16,6 @@ public interface JaguarServerInterface extends Remote {
   
   /* returns 1 if the user is already registered, 2 if the maximun number of players has been reached */
   int registerPlayer(String username) throws  RemoteException;
-  boolean hasOpponent(int userId) throws RemoteException;
+  boolean isVacant(int userId) throws RemoteException;
   void startMatch(int userId) throws RemoteException;
 }

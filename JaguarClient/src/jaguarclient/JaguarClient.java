@@ -24,14 +24,14 @@ public class JaguarClient {
   
   public JaguarClient(String server) {
     try {
-      clientGame = (JaguarServerInterface) Naming.lookup("//" + server + "/JaguarServerBruno");
+      this.clientGame = (JaguarServerInterface) Naming.lookup("//" + server + "/JaguarServerBruno");
     } catch (NotBoundException | MalformedURLException | RemoteException ex) {
       System.out.println("JaguarClient failed:");
     }
   }
   
   public void initClientGame(String username) throws RemoteException, InterruptedException {
-    int id = clientGame.registerPlayer(username);
+    int id = this.clientGame.registerPlayer(username);
     
     if(id == -2) {
       System.out.println("Server has reached maximum user capacity!");
@@ -40,23 +40,20 @@ public class JaguarClient {
       System.out.println("Username is already being used. Pleas try again.");
       System.exit(0);
     }
-    
+    System.out.print("Waiting for match up...");
     waitForMatchUp();
     
     this.clientId = id;
     
-    
- 
-    // match = clientGame.startMatch(id);
-    
-    
+    // match = clientGame.startMatch(id);    
+
   }  
   
   private void waitForMatchUp() throws RemoteException, InterruptedException {
-    
-    while(!clientGame.hasOpponent(this.clientId)) {
+   
+    while(this.clientGame.isVacant(this.clientId)) {
       sleep(700);
-      System.out.println("*");
+      System.out.print(".");
     }
   }
 }

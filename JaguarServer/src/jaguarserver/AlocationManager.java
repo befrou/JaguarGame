@@ -33,23 +33,30 @@ public class AlocationManager {
   public void init() {
     this.userRegistry = UserAlocation.getInstance();
     this.matchRegistry = MatchAlocation.getInstance();
+    
+    this.userRegistry.init(USER_CAPACITY);
+    this.matchRegistry.init(MATCH_CAPACITY);
   }
  
   public int registerPlayer(String username) throws InterruptedException {
-      
-    if(userRegistry.getTotalUsersAlocated() == USER_CAPACITY) {
+    System.out.println("\nRegistering player: " + username); 
+    
+    if(this.userRegistry.getTotalUsersAlocated() == USER_CAPACITY) {
       return -2;
-    } else if(userRegistry.containUser(username)) {
+    } else if(this.userRegistry.containUser(username)) {
       return -1;
     } 
-    User user = userRegistry.alocateUser(username);
-
-    Match match = matchRegistry.lookForAvailableMatch();
-
-    if(match == null) {
-      match = matchRegistry.createMatch(user);
-    }
-
+    
+    User user = this.userRegistry.alocateUser(username);
+    System.out.println("User Registry - OK");
+    
+    Match match = this.matchRegistry.lookForAvailableMatch();   
+    
+    if(match == null && this.matchRegistry.getTotalMatchesAlocated() < MATCH_CAPACITY) {
+      match = this.matchRegistry.createMatch(user);
+      System.out.println("Match Created \n");
+    } 
+    
     if(match.getUserOne() == null) {
        match.setUserOne(user);
     } else {
@@ -63,8 +70,10 @@ public class AlocationManager {
     return matchRegistry.getMatchByUserId(id);
   }
   
-  public boolean verifyUserMatchUp(int userId) throws InterruptedException {
-    Match match = matchRegistry.getMatchByUserId(userId);
+  public boolean userMatchAvailable(int userId) throws InterruptedException {
+    System.out.println("\nVerifying match up");
+    Match match = this.matchRegistry.getMatchByUserId(userId);
+    System.out.println("Found available match");
     
     return match.isAvailable();
     

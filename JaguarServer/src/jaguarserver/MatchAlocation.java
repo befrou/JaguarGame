@@ -33,8 +33,6 @@ public class MatchAlocation {
     return instance;
   }
   
-  
-  
   public void init(int capacity) {
     this.capacity = capacity;
     matches = new ArrayList<>();
@@ -44,8 +42,8 @@ public class MatchAlocation {
   public Match createMatch(User user) throws InterruptedException {
     mutex.acquire();
     
-    Match match = new Match(user, ++lastId);
-    matches.add(match);
+    Match match = new Match(lastId++);
+    this.matches.add(match);
     
     mutex.release();
     
@@ -62,7 +60,7 @@ public class MatchAlocation {
     
     int id = lastId++;
     
-    Match newMatch = new Match(user, lastId++);
+    Match newMatch = new Match(lastId++);
     matches.add(newMatch);
     
     mutex.release();
@@ -99,17 +97,31 @@ public class MatchAlocation {
   }
   
   public Match getMatchByUserId(int userId) throws InterruptedException {
-     mutex.acquire();
-    
+    mutex.acquire();
+   
     for(Match match : matches) {
+      System.out.println("us1: " +match.getUserOne().getId()  );
+      if(match.getUserTwo() != null)  System.out.println("us2: " +match.getUserTwo().getId());
+      
       if(match.getUserOne().getId() == userId || match.getUserTwo().getId() == userId) {
+        System.out.println("Match ID: " + match.getId());
         mutex.release();
         return match;
       }
     }
+  
     mutex.release();
     
     return null;
+  }
+  
+   public int getTotalMatchesAlocated() throws InterruptedException {
+    
+    mutex.acquire();
+    int numMatches = matches.size();
+    mutex.release();
+  
+    return numMatches;
   }
   
 }
