@@ -5,6 +5,7 @@
  */
 package jaguarserver;
 
+import gameLogic.PieceType;
 import java.rmi.RemoteException;
 
 /**
@@ -52,14 +53,16 @@ public class AlocationManager {
     
     Match match = this.matchRegistry.lookForAvailableMatch();   
     
-    if(match == null && this.matchRegistry.getTotalMatchesAlocated() < MATCH_CAPACITY) {
-      match = this.matchRegistry.createMatch(user);
+    if(match == null && this.matchRegistry.getTotalMatchesAlocated() < MATCH_CAPACITY) {    
+      match = this.matchRegistry.createMatch();
       System.out.println("Match Created \n");
     } 
     
     if(match.getUserOne() == null) {
+       user.setPieceType(PieceType.JAGUAR);
        match.setUserOne(user);
     } else {
+      user.setPieceType(PieceType.DOGS);
       match.setUserTwo(user);
     }
 
@@ -75,7 +78,20 @@ public class AlocationManager {
     Match match = this.matchRegistry.getMatchByUserId(userId);
     System.out.println("Found available match");
     
-    return match.isAvailable();
-    
+    return match.isAvailable();   
+  }
+  
+  public String getOpponentName(int userId) throws InterruptedException {
+    Match match = this.getUserMatch(userId);
+   
+    User usr1 = match.getUserOne();
+    User usr2 = match.getUserTwo();
+   
+    String opponent = "";
+    if(usr1 != null && usr2 != null) {
+      opponent = (usr1.getId() == userId) ? usr2.getUsername() : usr1.getUsername();
+    }
+  
+    return opponent;
   }
 }

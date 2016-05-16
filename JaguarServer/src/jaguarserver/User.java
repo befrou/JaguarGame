@@ -5,7 +5,8 @@
  */
 package jaguarserver;
 
-import gameLogic.GameManager;
+
+import gameLogic.PieceType;
 
 /**
  *
@@ -15,10 +16,19 @@ public class User {
   
   private int id;
   private String username;
+  private PieceType pType;
   
   public User(String username, int id) {
     this.id = id;
     this.username = username;
+  }
+  
+  public PieceType getPieceType() {
+    return this.pType;
+  }
+  
+  public void setPieceType(PieceType type) {
+    this.pType = type;
   }
   
   public int getId() {

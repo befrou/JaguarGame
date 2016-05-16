@@ -22,7 +22,7 @@ public class JaguarClientMain {
       String server = args[0];
     
       JaguarClient clientGame = new JaguarClient(server);
-      clientGame.initClientGame(args[1]);
+      clientGame.initClientMatch(args[1]);
     }
     
   }

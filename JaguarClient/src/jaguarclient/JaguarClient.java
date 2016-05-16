@@ -30,7 +30,7 @@ public class JaguarClient {
     }
   }
   
-  public void initClientGame(String username) throws RemoteException, InterruptedException {
+  public void initClientMatch(String username) throws RemoteException, InterruptedException {
     int id = this.clientGame.registerPlayer(username);
     
     if(id == -2) {
@@ -46,8 +46,15 @@ public class JaguarClient {
     this.clientId = id;
     
     // match = clientGame.startMatch(id);    
-
   }  
+  
+  public void play() {
+    
+  }
+  
+  private int isMyTurn() throws RemoteException {
+    return this.clientGame.isMyTurn(this.clientId);
+  }
   
   private void waitForMatchUp() throws RemoteException, InterruptedException {
    

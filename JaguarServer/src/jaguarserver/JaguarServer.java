@@ -55,5 +55,46 @@ public class JaguarServer extends UnicastRemoteObject implements JaguarServerInt
       Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
+
+  @Override
+  public int isMyTurn(int userId) throws RemoteException {
+    Match match;
+    try {
+      match =  this.alocManager.getUserMatch(userId);
+      if(match != null) return match.isMyTurn(userId);
+    } catch (InterruptedException ex) {
+      Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
+    }
+      return -1;
+  }
+
+  @Override
+  public String getBoard(int userId) throws RemoteException {
+    
+    Match match;
+    String board = "";
+    try {
+      if((match = this.alocManager.getUserMatch(userId)) != null)  board = match.getBoard();      
+    } catch (InterruptedException ex) {
+      Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    
+    return board;
+  }
+
+  @Override
+  public String getOpponent(int userId) throws RemoteException {
+    
+    String opponent = null;
+    
+    try {
+      opponent = this.alocManager.getOpponentName(userId);
+    } catch (InterruptedException ex) {
+      Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return opponent;
+  }
+  
+
   
 }

@@ -18,4 +18,7 @@ public interface JaguarServerInterface extends Remote {
   int registerPlayer(String username) throws  RemoteException;
   boolean isVacant(int userId) throws RemoteException;
   void startMatch(int userId) throws RemoteException;
+  int isMyTurn(int userId) throws RemoteException;
+  String getBoard(int userId) throws RemoteException;
+  String getOpponent(int userId) throws RemoteException;
 }

@@ -39,7 +39,7 @@ public class MatchAlocation {
     lastId = 0;
   }
   
-  public Match createMatch(User user) throws InterruptedException {
+  public Match createMatch() throws InterruptedException {
     mutex.acquire();
     
     Match match = new Match(lastId++);
