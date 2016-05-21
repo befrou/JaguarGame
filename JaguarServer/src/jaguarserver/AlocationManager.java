@@ -74,22 +74,29 @@ public class AlocationManager {
   }
   
   public boolean userMatchAvailable(int userId) throws InterruptedException {
-    System.out.println("\nVerifying match up");
-    Match match = this.matchRegistry.getMatchByUserId(userId);
-    System.out.println("Found available match");
-    
+    Match match = this.matchRegistry.getMatchByUserId(userId);    
     return match.isAvailable();   
   }
   
   public String getOpponentName(int userId) throws InterruptedException {
     Match match = this.getUserMatch(userId);
    
-    User usr1 = match.getUserOne();
-    User usr2 = match.getUserTwo();
+    User user1 = match.getUserOne();
+    User user2 = match.getUserTwo();
    
+    System.out.println("UserID: "+ userId);
+    System.out.println("User1: "+ user1.getUsername());
+    System.out.println("User2: "+ user2.getUsername());
+    
+    
     String opponent = "";
-    if(usr1 != null && usr2 != null) {
-      opponent = (usr1.getId() == userId) ? usr2.getUsername() : usr1.getUsername();
+    if(user1 != null && user2 != null) {
+      if(user1.getId() != userId) {
+         opponent = user1.getUsername();
+      } else {
+        opponent = user2.getUsername();
+      }
+     
     }
   
     return opponent;

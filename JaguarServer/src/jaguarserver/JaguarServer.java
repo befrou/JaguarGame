@@ -37,7 +37,7 @@ public class JaguarServer extends UnicastRemoteObject implements JaguarServerInt
   @Override
   public boolean isVacant(int userId) {
     boolean has = false;
-    System.out.println("\nHAS OPPONNENT");
+    
     try {
       has = this.alocManager.userMatchAvailable(userId);
     } catch (InterruptedException ex) {

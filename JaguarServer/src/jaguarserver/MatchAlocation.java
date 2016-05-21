@@ -100,11 +100,8 @@ public class MatchAlocation {
     mutex.acquire();
    
     for(Match match : matches) {
-      System.out.println("us1: " +match.getUserOne().getId()  );
-      if(match.getUserTwo() != null)  System.out.println("us2: " +match.getUserTwo().getId());
       
       if(match.getUserOne().getId() == userId || match.getUserTwo().getId() == userId) {
-        System.out.println("Match ID: " + match.getId());
         mutex.release();
         return match;
       }

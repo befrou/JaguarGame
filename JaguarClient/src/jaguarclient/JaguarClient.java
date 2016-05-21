@@ -40,10 +40,11 @@ public class JaguarClient {
       System.out.println("Username is already being used. Pleas try again.");
       System.exit(0);
     }
-    System.out.print("Waiting for match up...");
-    waitForMatchUp();
     
     this.clientId = id;
+    
+    System.out.print("Waiting for match up...");
+    waitForMatchUp();
     
     // match = clientGame.startMatch(id);    
   }  
