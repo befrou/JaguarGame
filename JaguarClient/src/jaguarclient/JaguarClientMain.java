@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  * @author bruno
  */
 public class JaguarClientMain {
-  public static void main(String[] args) throws RemoteException, InterruptedException {  
+  public static void main(String[] args) throws RemoteException, InterruptedException, Exception {  
     
    
     if (args.length != 2) {

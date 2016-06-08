@@ -5,7 +5,7 @@
  */
 package jaguarserver;
 
-import gameLogic.PieceType;
+import jaguarshared.PieceType;
 import java.rmi.RemoteException;
 
 /**
@@ -69,13 +69,38 @@ public class AlocationManager {
     return user.getId();
   }
   
-  public Match getUserMatch(int id) throws InterruptedException {
-    return matchRegistry.getMatchByUserId(id);
+  public int sendMove(int userId) throws InterruptedException {
+    User user = getUserMatch(userId).getUserById(userId);
+    return 0;
   }
   
-  public boolean userMatchAvailable(int userId) throws InterruptedException {
+  public Match getUserMatch(int id) throws InterruptedException {
+    return this.matchRegistry.getMatchByUserId(id);
+  }
+  
+  public PieceType getUserPieceType(int userId) throws InterruptedException {
+    return this.userRegistry.getUserById(userId).getPieceType();
+  }
+  
+  public int userMatchAvailable(int userId) throws InterruptedException {
     Match match = this.matchRegistry.getMatchByUserId(userId);    
-    return match.isAvailable();   
+    
+    //  timeout
+    if(match.getMatchManager().matchmakingTimeout() == -2)
+       return -2;
+    
+    int matchState = match.isAvailable() ? 0 : 1; // 0 => there is only one user - 1 => there are two users
+    
+    return matchState;   
+  }
+  
+  public int getMatchState(int userId) throws InterruptedException {
+    
+    Match match = this.matchRegistry.getMatchByUserId(userId);
+    
+    int myTurn = match.getMatchState(userId);
+    
+    return 0;
   }
   
   public String getOpponentName(int userId) throws InterruptedException {

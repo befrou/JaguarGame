@@ -5,6 +5,7 @@
  */
 package gameLogic;
 
+import jaguarshared.Direction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

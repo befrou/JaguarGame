@@ -5,6 +5,8 @@
  */
 package jaguarserver;
 
+import jaguarshared.Direction;
+import jaguarshared.PieceType;
 import java.rmi.RemoteException;
 import jaguarshared.JaguarServerInterface;
 import java.rmi.server.UnicastRemoteObject;
@@ -35,16 +37,16 @@ public class JaguarServer extends UnicastRemoteObject implements JaguarServerInt
   }
   
   @Override
-  public boolean isVacant(int userId) {
-    boolean has = false;
+  public int isVacant(int userId) {
+    int state = 0;
     
     try {
-      has = this.alocManager.userMatchAvailable(userId);
+      state = this.alocManager.userMatchAvailable(userId);
     } catch (InterruptedException ex) {
       Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
     }
     
-    return has;
+    return state;
   }
 
   @Override
@@ -60,21 +62,22 @@ public class JaguarServer extends UnicastRemoteObject implements JaguarServerInt
   public int isMyTurn(int userId) throws RemoteException {
     Match match;
     try {
-      match =  this.alocManager.getUserMatch(userId);
-      if(match != null) return match.isMyTurn(userId);
+      match = this.alocManager.getUserMatch(userId);
+      if(match != null) return match.getMatchState(userId);
     } catch (InterruptedException ex) {
       Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
     }
       return -1;
   }
 
+  
   @Override
   public String getBoard(int userId) throws RemoteException {
     
     Match match;
     String board = "";
     try {
-      if((match = this.alocManager.getUserMatch(userId)) != null)  board = match.getBoard();      
+      if((match = this.alocManager.getUserMatch(userId)) != null)  board = match.getBoard();
     } catch (InterruptedException ex) {
       Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
     }
@@ -94,7 +97,38 @@ public class JaguarServer extends UnicastRemoteObject implements JaguarServerInt
     }
     return opponent;
   }
-  
 
-  
+  @Override
+  public int sendMove(int userId, String pieceId, Direction direction) throws RemoteException {
+    
+    int situation = 0;
+   
+    try {
+      Match match = this.alocManager.getUserMatch(userId);
+      
+      MatchManager manager = match.getMatchManager();
+      situation = manager.move(pieceId, direction);
+    } catch (InterruptedException ex) {
+      Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return situation;
+  }
+
+  @Override
+  public PieceType getUserPieceType(int userId) throws RemoteException {
+    try {
+      return this.alocManager.getUserPieceType(userId);
+     
+    } catch (InterruptedException ex) {
+      Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return null;
+  }
+
+  @Override
+  public int endMatch(int userId) throws RemoteException {
+    int x = 0;
+    return 1;
+    
+  }
 }

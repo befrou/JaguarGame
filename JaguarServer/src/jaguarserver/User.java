@@ -6,7 +6,7 @@
 package jaguarserver;
 
 
-import gameLogic.PieceType;
+import jaguarshared.PieceType;
 
 /**
  *

@@ -6,19 +6,18 @@
 package jaguarserver;
 
 import gameLogic.GameManager;
-import gameLogic.PieceType;
+import jaguarshared.PieceType;
 
 /**
  *
  * @author bruno
  */
-public class Match {
-  
+public class Match {  
   private int id;
   private User user1; /* Jaguar */
   private User user2; /* Dogs */
   private MatchManager manager;
-  private int matchState;   /* 0 to jaguar - 1 to dogs */
+  
   
   private boolean available;
   
@@ -27,13 +26,11 @@ public class Match {
     this.user2 = null;
     this.id = id;
     this.manager = new MatchManager();
-    this.matchState = 0;
     
     this.available = true;
   }
   
   public void startMatch() {
-    this.manager.initializePieces();
     this.manager.startMatch();
   }
   
@@ -57,6 +54,10 @@ public class Match {
     return this.user2;
   }
   
+  public User getUserById(int userId) {
+    return (userId == user1.getId()) ? user1 : user2;
+  }
+  
   public void setUserOne(User user1) {
     this.user1 = user1; 
   }
@@ -69,13 +70,9 @@ public class Match {
     return this.manager;
   }
   
-  public int isMyTurn(int userId) {
-    PieceType piece = (user1.getId() == userId) ? PieceType.JAGUAR : PieceType.DOGS;
-    return manager.isMyTurn(piece);
-  }
-  
-  public void setTurn(int turn) {
-    this.matchState = turn;
+  public int getMatchState(int userId) {
+    PieceType pType = (user1.getId() == userId) ? user1.getPieceType() : user2.getPieceType();
+    return this.manager.getMatchState(pType);
   }
   
   public String getBoard() {
