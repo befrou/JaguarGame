@@ -26,6 +26,7 @@ public class JaguarClient {
   private JaguarServerInterface clientGame;
   private int clientId;
   private PieceType pType;
+  private String oponnent;
   
   public JaguarClient(String server) {
     try {
@@ -55,9 +56,9 @@ public class JaguarClient {
     waitForMatchUp();
     
     this.clientGame.startMatch(id);
+    this.oponnent = this.clientGame.getOpponent(id);
     play();
     
-    // match = clientGame.startMatch(id);    
   }  
   
   private void play() throws RemoteException, Exception {
@@ -68,19 +69,27 @@ public class JaguarClient {
       switch(matchState) {
         case -1: throw new Exception("Error");
           
-        case 0: sleep(700);   // not my turn
+        case 0: 
+          System.out.print("\n" + this.oponnent + "'s turn"  );
+          oponnentsTurn();
           break;
         case 1: myMove();      // my turn
           break;
-        case 2: System.out.println("YOU WON!!!!!!!!!!!");
+        case 2:
+          System.out.println("YOU WON!!!!!!!!!!!");
           break;
-        case 3: System.out.println("YOU LOST!");
+        case 3: 
+          this.clientGame.endMatch(this.clientId);  //  endMatch needs to be called only once by just one user
+          System.out.println("YOU LOST!");
           break;
         case 4:
           break;  
-        case 5: System.out.println("YOU WON BY WO!");
+        case 5: 
+          System.out.println("YOU WON BY WO!");
           break;
-        case 6: System.out.println("YOU LOST BY WO!");
+        case 6: 
+          this.clientGame.endMatch(this.clientId);  //  endMatch needs to be called only once by just one user
+          System.out.println("YOU LOST BY WO!");
           break;
       }
     }
@@ -156,6 +165,18 @@ public class JaguarClient {
   
   private int isMyTurn() throws RemoteException {
     return this.clientGame.isMyTurn(this.clientId);
+  }
+  
+  private int oponnentsTurn() throws RemoteException, InterruptedException {
+    int matchState;
+    
+    while((matchState = this.clientGame.isMyTurn(this.clientId)) == 0) {
+      sleep(1000);
+      System.out.print(".");
+    }
+    
+    System.out.println("\n");
+    return matchState;
   }
   
   private void waitForMatchUp() throws RemoteException, InterruptedException {  

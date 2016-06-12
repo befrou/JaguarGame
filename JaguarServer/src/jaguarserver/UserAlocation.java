@@ -22,7 +22,7 @@ public class UserAlocation {
   
   private Semaphore mutex = new Semaphore(1);
   
-  /* singleton can be called only be called by other classes in the same package */
+  /* singleton can only be called by other classes in the same package */
   protected UserAlocation() {
     
   }
@@ -47,7 +47,7 @@ public class UserAlocation {
   public User alocateUser(String username) throws InterruptedException {
     mutex.acquire();
     User newUser = new User(username, lastId++);
-    users.add(newUser);
+    this.users.add(newUser);
     mutex.release();
     
     return newUser;
@@ -84,5 +84,18 @@ public class UserAlocation {
     return numUsers;
   }
   
+  public boolean removeUserById(int userId) throws InterruptedException{
+    mutex.acquire();
+    for(User user : this.users) {
+      if(user.getId() == userId) {
+        mutex.release();
+        return this.users.remove(user);
+      }
+    }
+    mutex.release();
+    return false;
+  }
+  
+
  
 }

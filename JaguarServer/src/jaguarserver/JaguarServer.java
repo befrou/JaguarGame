@@ -127,8 +127,13 @@ public class JaguarServer extends UnicastRemoteObject implements JaguarServerInt
 
   @Override
   public int endMatch(int userId) throws RemoteException {
-    int x = 0;
-    return 1;
+    try {
+      return this.alocManager.endMatch(userId);
+     
+    } catch (InterruptedException ex) {
+      Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return -1;
     
   }
 }

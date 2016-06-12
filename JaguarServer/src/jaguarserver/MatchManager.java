@@ -25,21 +25,27 @@ public class MatchManager {
   private final Board board;
   private PieceType turn;   /* 0 to jaguar - 1 to dogs */
   private TimeManager timer;
+  private boolean waitingForMatchUp;
   
   private int eatenDogs;
   private static final String JAGUARID = " J";
-  private boolean alreadyAte;
+  private boolean eatAgain;
   
   public MatchManager() {
     this.board = new Board();
     this.pieces = new HashMap<>();
     this.turn = PieceType.JAGUAR;
     this.timer = new TimeManager();
-    this.alreadyAte = false;
+    this.eatAgain = this.waitingForMatchUp = false;
+   
   }
   
   public void startMatch() {
     initializePieces();
+  }
+  
+  public void setWaitingForMatchUp(boolean waiting) {
+    this.waitingForMatchUp = waiting;
   }
 
   public int move(String pieceId, Direction direction) {
@@ -65,25 +71,50 @@ public class MatchManager {
    
     boolean validMove = canMove(currentPosition, direction, pieceId);
     
-    if(validMove) {
-      targetPosition.setPiece(currentPosition.getPiece());  
-      currentPosition.setPiece(null);
-      
-      pieces.replace(pieceId, currentPosition, targetPosition);
-      
-      flag = 1;
-    }else {
-      if(piece.getId().equals(JAGUARID) && canEat(targetPosition, direction)) {
-        eat(currentPosition, targetPosition, direction);
-        this.eatenDogs++;
+    if(!this.eatAgain) {
+     
+      if(validMove) {
+        targetPosition.setPiece(currentPosition.getPiece());  
+        currentPosition.setPiece(null);
+
+        pieces.replace(pieceId, currentPosition, targetPosition);
+
         flag = 1;
-      } 
+      }else {
+        if(piece.getId().equals(JAGUARID) && canEat(targetPosition, direction)) {         
+          currentPosition = eat(currentPosition, targetPosition, direction);
+          
+          this.eatenDogs++;
+          flag = 1;
+          
+          this.eatAgain = canEatAgain(currentPosition);
+        }
+      }
+    }else {
+      if(targetPosition != null) {
+        
+        if(canEat(targetPosition, direction)) {
+          currentPosition = eat(currentPosition, targetPosition, direction);
+         
+          this.eatenDogs++;
+         
+          this.eatAgain = canEatAgain(currentPosition);
+          System.out.println("\nEatAgain " + this.eatAgain);
+        }else {
+          this.eatAgain = false;
+        }
+        
+      }else {
+        this.eatAgain = false;
+      }
+      flag = 1;
     }
-    
     
     /* Move executed correctly so change turn */
     if(flag == 1) {
-      this.turn = (this.turn == PieceType.JAGUAR) ? PieceType.DOGS : PieceType.JAGUAR;
+      if (!this.eatAgain) {
+        this.turn = (this.turn == PieceType.JAGUAR) ? PieceType.DOGS : PieceType.JAGUAR;
+      }
     }
     
     timer.setUpTimers();  // restart timers
@@ -91,35 +122,47 @@ public class MatchManager {
     return flag;
   }
   
-  
-  
-  private void eat(BoardPosition currentPosition, BoardPosition victimPosition, Direction dir) {
-    BoardPosition targetPosition = victimPosition.getAdjacentPosition(dir);
+  private boolean canEat(BoardPosition victimPosition, Direction dir) {
+    if(victimPosition == null || victimPosition.getPiece() == null) return false;
     
-    Piece jaguar = currentPosition.getPiece();
-    Piece dog = victimPosition.getPiece();
+    BoardPosition targetPosition; // Jaguar position after eating DOG
+    if((targetPosition = victimPosition.getAdjacentPosition(dir)) != null ) {
+      return targetPosition.getPiece() == null;
+    }
+    return false;
+  }
+  
+  private boolean canEatAgain(BoardPosition currentPosition) {
+    ArrayList<Direction> availableDirections = currentPosition.getAvailableDirections();
+          
+    for(Direction dir : availableDirections) {
+      BoardPosition target = currentPosition.getAdjacentPosition(dir);
+      
+      if(canEat(target,dir)) return true;
+    }
+    return false;
+  }
+  
+  private BoardPosition eat(BoardPosition currentPosition, BoardPosition victimPosition, Direction dir) {
+    BoardPosition targetPosition = victimPosition.getAdjacentPosition(dir); // Position of the Jaguar after eating a dog
+    
+    Piece jaguar = currentPosition.getPiece(); 
+    Piece dog = victimPosition.getPiece();      
             
-    targetPosition.setPiece(jaguar);
-    victimPosition.setPiece(null);
-    currentPosition.setPiece(null);
+    targetPosition.setPiece(jaguar);  // Setting Jaguar piece on new Position
+    victimPosition.setPiece(null);    // Setting the dog piece as null because he was eaten
+    currentPosition.setPiece(null);   // Setting preview Jaguar position to null
     
-    pieces.replace(JAGUARID, currentPosition, targetPosition);
-    pieces.replace(dog.getId(), victimPosition, null);
+    pieces.replace(JAGUARID, currentPosition, targetPosition);  //  Mapping Jaguar ID to new Position
+    pieces.replace(dog.getId(), victimPosition, null);          //  Removing map to the dog ID since he has been eaten
+    
+    return targetPosition;
   }
   
   private boolean canMove(BoardPosition currentPosition, Direction dir, String pieceId) {
     BoardPosition targetPosition = currentPosition.getAdjacentPosition(dir);
     
-    if(targetPosition.getPiece() != null)
-      return false;
-    
-    return true;
-  }
-  
-  private boolean canEat(BoardPosition dogPos, Direction dir) {
-    BoardPosition targetPosition = dogPos.getAdjacentPosition(dir);
-    
-    if(targetPosition != null )
+    if(targetPosition != null)
       return targetPosition.getPiece() == null;
     
     return false;
@@ -175,6 +218,10 @@ public class MatchManager {
   }
   
   public int matchmakingTimeout() {
+    if(!this.waitingForMatchUp) {
+      this.waitingForMatchUp = true;
+      timer.setUpTimers();
+    }
     boolean reachedLimit = timer.reachedLimitToFindMatch();
     
     if(reachedLimit)

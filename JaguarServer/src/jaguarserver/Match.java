@@ -34,6 +34,10 @@ public class Match {
     this.manager.startMatch();
   }
   
+  public void resetMatch() {
+    this.manager = new MatchManager();
+  }
+  
   public boolean isAvailable() {
     return (user1 == null || user2 == null);
   }

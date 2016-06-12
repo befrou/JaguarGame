@@ -22,6 +22,7 @@ public class AlocationManager {
   private UserAlocation userRegistry;
   private MatchAlocation matchRegistry;
   
+  
   protected AlocationManager() {}
   
   public static AlocationManager getInstance() {
@@ -49,14 +50,18 @@ public class AlocationManager {
     } 
     
     User user = this.userRegistry.alocateUser(username);
-    System.out.println("User Registry - OK");
+    System.out.println("USER REGISTRY - OK");
     
-    Match match = this.matchRegistry.lookForAvailableMatch();   
+    Match match = this.matchRegistry.lookForAvailableMatch();
+   
+    System.out.println("Username: " + username + "\nID: " + user.getId());
     
     if(match == null && this.matchRegistry.getTotalMatchesAlocated() < MATCH_CAPACITY) {    
       match = this.matchRegistry.createMatch();
-      System.out.println("Match Created \n");
+      //System.out.println("Match Created with id " + match.getId() + "\n");
     } 
+    user.setMatch(match);
+    System.out.println(username + " is on Match " + match.getId());
     
     if(match.getUserOne() == null) {
        user.setPieceType(PieceType.JAGUAR);
@@ -69,13 +74,12 @@ public class AlocationManager {
     return user.getId();
   }
   
-  public int sendMove(int userId) throws InterruptedException {
-    User user = getUserMatch(userId).getUserById(userId);
-    return 0;
-  }
-  
-  public Match getUserMatch(int id) throws InterruptedException {
-    return this.matchRegistry.getMatchByUserId(id);
+  public Match getUserMatch(int userId) throws InterruptedException {
+    
+     User user = this.userRegistry.getUserById(userId);
+     Match match = user.getMatch();
+     return match;
+  //return this.matchRegistry.getMatchByUserId(userId);
   }
   
   public PieceType getUserPieceType(int userId) throws InterruptedException {
@@ -100,7 +104,7 @@ public class AlocationManager {
     
     int myTurn = match.getMatchState(userId);
     
-    return 0;
+    return myTurn; //0
   }
   
   public String getOpponentName(int userId) throws InterruptedException {
@@ -108,12 +112,7 @@ public class AlocationManager {
    
     User user1 = match.getUserOne();
     User user2 = match.getUserTwo();
-   
-    System.out.println("UserID: "+ userId);
-    System.out.println("User1: "+ user1.getUsername());
-    System.out.println("User2: "+ user2.getUsername());
-    
-    
+       
     String opponent = "";
     if(user1 != null && user2 != null) {
       if(user1.getId() != userId) {
@@ -125,5 +124,31 @@ public class AlocationManager {
     }
   
     return opponent;
+  }
+  
+  public int endMatch(int userId) throws InterruptedException {
+    User user = this.userRegistry.getUserById(userId);
+    //Match match = this.matchRegistry.getMatchByUserId(userId);
+    Match match = user.getMatch();
+    
+    System.out.println("ENDING MATCH");
+    System.out.println("Match ID -> " + match.getId());
+    System.out.println("User1 ID -> " + match.getUserOne().getId());
+    System.out.println("User2 ID -> " + match.getUserTwo().getId() + "\n");
+    
+    boolean userOneRemoved = this.userRegistry.removeUserById(match.getUserOne().getId());
+    boolean userTwoRemoved = this.userRegistry.removeUserById(match.getUserTwo().getId());
+ 
+    match.setUserOne(null);
+    match.setUserTwo(null);
+    
+    if(match != null) {
+      match.resetMatch();
+      match.getMatchManager().setWaitingForMatchUp(false);
+      if(userOneRemoved && userTwoRemoved) { 
+        return 0;
+      }
+    }
+    return -1;
   }
 }

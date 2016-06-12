@@ -21,7 +21,7 @@ public class TimeManager {
   
   public TimeManager() {
    this.currentTime = System.currentTimeMillis();
-   setUpTimers();
+   //setUpTimers();
   }
   
   public void setUpTimers() {
@@ -29,6 +29,8 @@ public class TimeManager {
     this.move_time_limit = this.started_at + MOVE_TIMEOUT;
     this.matchmaking_time_limit = this.started_at + MATCHMAKING_TIMEOUT;
   }
+  
+
   
   public boolean reachedLimitToMove() {
     this.currentTime = System.currentTimeMillis();

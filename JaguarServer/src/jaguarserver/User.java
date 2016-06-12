@@ -17,10 +17,20 @@ public class User {
   private int id;
   private String username;
   private PieceType pType;
+  private Match match;
   
   public User(String username, int id) {
     this.id = id;
     this.username = username;
+    this.match = null;
+  }
+  
+  public void setMatch(Match match) {
+    this.match = match;
+  }
+  
+  public Match getMatch() {
+    return this.match;
   }
   
   public PieceType getPieceType() {
