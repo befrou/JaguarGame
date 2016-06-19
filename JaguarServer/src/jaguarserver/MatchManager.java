@@ -29,15 +29,19 @@ public class MatchManager {
   
   private int eatenDogs;
   private static final String JAGUARID = " J";
-  private boolean eatAgain;
+  private boolean moveAgain;
   
   public MatchManager() {
     this.board = new Board();
     this.pieces = new HashMap<>();
     this.turn = PieceType.JAGUAR;
     this.timer = new TimeManager();
-    this.eatAgain = this.waitingForMatchUp = false;
+    this.moveAgain = this.waitingForMatchUp = false;
    
+  }
+  
+  public PieceType geTurn() {
+    return this.turn;
   }
   
   public void startMatch() {
@@ -58,61 +62,46 @@ public class MatchManager {
       by timeout
     */
     if(timer.reachedLimitToMove())
-      return 1;
+      return 2;
     
     BoardPosition currentPosition = pieces.get(pieceId);
+     
+    if(currentPosition == null) return -1;  //  There is no piece with the especified ID(might have been eaten or doesn't exist)
     
-    if(currentPosition == null) return -1;  //  there is no piece with the especified ID(might have been eaten or doesn't exist)
-    if(pieceId.equals(JAGUARID) && this.turn == PieceType.DOGS) return -1;  //  in case the dog user tries to select the jaguar
     
     BoardPosition targetPosition = currentPosition.getAdjacentPosition(direction);
-   
+    
     Piece piece = currentPosition.getPiece();
    
     boolean validMove = canMove(currentPosition, direction, pieceId);
+
+    String id = piece.getId();
+    boolean isJaguar = id.equals(JAGUARID);
     
-    if(!this.eatAgain) {
-     
-      if(validMove) {
-        targetPosition.setPiece(currentPosition.getPiece());  
-        currentPosition.setPiece(null);
+  
+    if(validMove) {
+      targetPosition.setPiece(currentPosition.getPiece());  
+      currentPosition.setPiece(null);
 
-        pieces.replace(pieceId, currentPosition, targetPosition);
-
-        flag = 1;
-      }else {
-        if(piece.getId().equals(JAGUARID) && canEat(targetPosition, direction)) {         
-          currentPosition = eat(currentPosition, targetPosition, direction);
-          
-          this.eatenDogs++;
-          flag = 1;
-          
-          this.eatAgain = canEatAgain(currentPosition);
-        }
-      }
-    }else {
-      if(targetPosition != null) {
-        
-        if(canEat(targetPosition, direction)) {
-          currentPosition = eat(currentPosition, targetPosition, direction);
-         
-          this.eatenDogs++;
-         
-          this.eatAgain = canEatAgain(currentPosition);
-          System.out.println("\nEatAgain " + this.eatAgain);
-        }else {
-          this.eatAgain = false;
-        }
-        
-      }else {
-        this.eatAgain = false;
-      }
+      pieces.replace(pieceId, currentPosition, targetPosition);
+      this.moveAgain = false;
       flag = 1;
+    }else {
+      
+      if(isJaguar && canEat(targetPosition, direction)) {         
+        eat(currentPosition, targetPosition, direction);
+
+        this.eatenDogs++;
+        flag = 1;
+        this.moveAgain = !jaguarWinningCondition();
+      } else {
+        flag = 0;
+      }
     }
     
     /* Move executed correctly so change turn */
     if(flag == 1) {
-      if (!this.eatAgain) {
+      if (!this.moveAgain) {
         this.turn = (this.turn == PieceType.JAGUAR) ? PieceType.DOGS : PieceType.JAGUAR;
       }
     }
@@ -131,19 +120,8 @@ public class MatchManager {
     }
     return false;
   }
-  
-  private boolean canEatAgain(BoardPosition currentPosition) {
-    ArrayList<Direction> availableDirections = currentPosition.getAvailableDirections();
-          
-    for(Direction dir : availableDirections) {
-      BoardPosition target = currentPosition.getAdjacentPosition(dir);
-      
-      if(canEat(target,dir)) return true;
-    }
-    return false;
-  }
-  
-  private BoardPosition eat(BoardPosition currentPosition, BoardPosition victimPosition, Direction dir) {
+ 
+  private void eat(BoardPosition currentPosition, BoardPosition victimPosition, Direction dir) {
     BoardPosition targetPosition = victimPosition.getAdjacentPosition(dir); // Position of the Jaguar after eating a dog
     
     Piece jaguar = currentPosition.getPiece(); 
@@ -155,8 +133,7 @@ public class MatchManager {
     
     pieces.replace(JAGUARID, currentPosition, targetPosition);  //  Mapping Jaguar ID to new Position
     pieces.replace(dog.getId(), victimPosition, null);          //  Removing map to the dog ID since he has been eaten
-    
-    return targetPosition;
+
   }
   
   private boolean canMove(BoardPosition currentPosition, Direction dir, String pieceId) {
@@ -172,29 +149,33 @@ public class MatchManager {
   public int getMatchState(PieceType pType) {
     boolean timeout = timer.reachedLimitToMove();
     
-    if(pType == this.turn) {
-      /* Your timer expired => you loose by WO */
+    boolean myTurn = pType == this.turn;
+    
+    if(myTurn) {
+      // Your timer expired => you loose by WO 
       if(timeout)
         return 6;
       
-      /*  The player in the previous turn won so the current player lost*/
-      if(dogsWinningCondition() || jaguarWinningCondition()) {
+      //  The player in the previous turn won so the current player lost
+      if((dogsWinningCondition() || jaguarWinningCondition())) {
         return 3; 
       } else {
         return 1;
       }
     } else {
-      /* Opponent timer expired => you won by WO */
+      // Opponent timer expired => you won by WO 
       if(timeout)
         return 5;
       
-      if(dogsWinningCondition() || jaguarWinningCondition()) {
+      if((dogsWinningCondition() || jaguarWinningCondition())) {
         return 2;
       } else {
         return 0;
       }
     }
-  }
+    
+  
+}
   
   private boolean dogsWinningCondition() {
     BoardPosition jaguarPos = pieces.get(JAGUARID);
@@ -236,31 +217,35 @@ public class MatchManager {
   
    /* set pieces position on its respective places */
   private void initializePieces() {
+    
     ArrayList<BoardPosition> array = board.getBoardPositions();
-    int dogId = 1;
-    int arrayIndex = 0;
+    int dogId = 0;
     
     String strId;
     int jaguarInitPos = 12;
+    int arrayIndex;
     
-    for(int row = 0; row < Board.ROWS; row++) {
-      for(int offset = 0; offset < 3; offset++) {  
-        
+    for(int col = Board.COLUMNS - 5; col >=0; col--) {
+     
+      for(int row = 0; row < Board.ROWS; row++) {
+        arrayIndex = (row * 5) + col;
         strId = "";
-        
+       
         if(dogId < 10) strId = "0" + dogId;
                else strId += dogId;
         
-        if((arrayIndex + offset) == 12) continue;  /* this position belongs to Jaguar, so don't */ 
-                        
-        pieces.put(strId, array.get(arrayIndex + offset));
+        if(arrayIndex == jaguarInitPos)  continue;
+        
+        pieces.put(strId, array.get(arrayIndex));
         pieces.get(strId).setPiece(new Dog(strId));
-      
+        
         dogId++;
       }
-      arrayIndex += 5;  /* jumps to the next row */
     }
+    
     pieces.put(JAGUARID, array.get(jaguarInitPos));
     pieces.get(JAGUARID).setPiece(new Jaguar(JAGUARID));
-  }  
+  
+  }
+  
 }

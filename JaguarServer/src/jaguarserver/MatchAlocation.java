@@ -82,6 +82,32 @@ public class MatchAlocation {
     return null;
   }
   
+  public Match filterMatchByPreReg(int userOneId, int userTwoId) throws InterruptedException {
+    mutex.acquire();
+    for(Match match : matches) {
+      if(match.isAvailable()) {
+        User userOne = match.getUserOne();
+        
+        if(userOne!= null) {
+          if(userOne.getId() == userOneId) {
+            mutex.release();
+            return match;
+          }
+        }
+        User userTwo = match.getUserTwo();
+        
+        if(userTwo != null) {
+          if(userTwo.getId() == userTwoId) {
+            mutex.release();
+            return match;
+          }
+        }
+      }
+    }
+    mutex.release();
+    return null;
+  }
+  
   public Match lookForAvailableMatch() throws InterruptedException {
     mutex.acquire();
     
@@ -100,10 +126,21 @@ public class MatchAlocation {
     mutex.acquire();
    
     for(Match match : matches) {
+      User userOne = match.getUserOne();
+      User userTwo = match.getUserTwo();
       
-      if(match.getUserOne().getId() == userId || match.getUserTwo().getId() == userId) {
-        mutex.release();
-        return match;
+      if(userOne != null) {
+        if(match.getUserOne().getId() == userId) {
+          mutex.release();
+          return match;
+        }
+      }
+      
+       if(userTwo != null) {
+        if(match.getUserTwo().getId() == userId) {
+          mutex.release();
+          return match;
+        }
       }
     }
   

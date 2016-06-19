@@ -5,7 +5,8 @@
  */
 package jaguarserver;
 
-import gameLogic.GameManager;
+
+import jaguarshared.Direction;
 import jaguarshared.PieceType;
 
 /**
@@ -17,7 +18,6 @@ public class Match {
   private User user1; /* Jaguar */
   private User user2; /* Dogs */
   private MatchManager manager;
-  
   
   private boolean available;
   
@@ -77,6 +77,10 @@ public class Match {
   public int getMatchState(int userId) {
     PieceType pType = (user1.getId() == userId) ? user1.getPieceType() : user2.getPieceType();
     return this.manager.getMatchState(pType);
+  }
+  
+  public PieceType getTurn() {
+    return this.manager.geTurn();
   }
   
   public String getBoard() {

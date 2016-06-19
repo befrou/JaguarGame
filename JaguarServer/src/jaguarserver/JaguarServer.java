@@ -67,7 +67,7 @@ public class JaguarServer extends UnicastRemoteObject implements JaguarServerInt
     } catch (InterruptedException ex) {
       Logger.getLogger(JaguarServer.class.getName()).log(Level.SEVERE, null, ex);
     }
-      return -1;
+    return -1;
   }
 
   

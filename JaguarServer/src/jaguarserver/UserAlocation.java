@@ -53,6 +53,15 @@ public class UserAlocation {
     return newUser;
   }
   
+  public User alocatePreRegisteredUser(String username, int userId) throws InterruptedException {
+    mutex.acquire();
+    User preRegisteredUser = new User(username, userId);
+    this.users.add(preRegisteredUser);
+    mutex.release();
+    
+    return preRegisteredUser;
+  }
+  
   /* Verify a user with the parameter username has already been alocated */
   public boolean containUser(String username) throws InterruptedException {  
     mutex.acquire();
@@ -70,6 +79,7 @@ public class UserAlocation {
         return user;
       }
     }
+    System.out.println("getUserById(" + id +") => NULL");
     mutex.release();
     
     return null;   

@@ -126,7 +126,7 @@ public class JaguarClient {
     System.out.println("Choose the ID of the DOG you wish to move.");
     int dogId = Integer.parseInt(new Scanner(System.in).next()); 
    
-    while(dogId < 1 || dogId > 14) {
+    while(dogId < 0 || dogId > 13) {
       System.out.println("You have choosen an invalid ID!\n Choose again. ");
       dogId = Integer.parseInt(new Scanner(System.in).next());
     }

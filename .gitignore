@@ -8,3 +8,9 @@
 /JaguarServer/dist/
 /JaguarClient/build/
 /JaguarClient/dist/
+/JaguarWSServer/nbproject/private/
+/JaguarWSClient/nbproject/private/
+/JaguarWSServer/build/
+/JaguarWSClient/build/
+/JaguarWSClient/dist/
+/JaguarWSServer/dist/

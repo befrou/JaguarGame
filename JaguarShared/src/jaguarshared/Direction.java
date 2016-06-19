@@ -10,14 +10,16 @@ package jaguarshared;
  * @author bruno
  */
 public enum Direction {
-  Up(1),
-  UpLeft(2),
-  UpRight(3),
-  Down(4),
-  DownLeft(5),
-  DownRight(6),
-  Left(7),
-  Right(8);
+  Right(0),
+  DownRight(1),
+  Down(2),
+  DownLeft(3),
+  Left(4),
+  UpLeft(5),
+  Up(6),
+  UpRight(7);
+ 
+ 
   
   
   private int val;

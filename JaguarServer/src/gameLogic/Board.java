@@ -233,30 +233,56 @@ public class Board {
   }
  
   public String toString() {
+
     
     String output = "";
     int row = 0, column = 0;
     
+    for(int x = 0; x < Board.ROWS; x++) {
+      for(int y = 0; y < Board.COLUMNS; y++ ) {
+        BoardPosition aux = positions.get(new Position(x, y));
+        Piece piece;
+        
+        if(aux != null) {
+          piece = aux.getPiece();
+          
+          if(piece != null) {
+            if(!piece.getId().equals(" J")) output +="C";
+            else
+              output += "O";
+          }else {     
+              output += ".";   
+          }
+        }else {
+          if (y == 5 && (x == 0 || x == 4)) {
+            output += "x";
+          }else if (y == 6 && (x == 1 || x == 3)) {
+            output += "x";
+          }
+        }
+      }
+    }
+    /*
     for (int x = 0; x <= Board.ROWS - 1; x++) {
       for (int y = 0; y < Board.COLUMNS; y++) {
         BoardPosition aux = positions.get(new Position(x, y));
         Piece p;
         //System.out.println("x:"+x + " y:"+y + "aux" + aux);
 
-        if(aux != null) {
-         p = aux.getPiece();
-         if(p == null) {     
-             output += "..";
-         }
-         else{
-            output += "" + p.getId() + "";
-         }
-         if (y < 4 || (x == 2 && y < 6)) {
-          output += "--";
-         }       
-         else {
-              output += "  ";
-          } 
+      if(aux != null) {
+        p = aux.getPiece();
+        if(p == null) {     
+            output += "..";
+        }
+        else{
+           output += "" + p.getId() + "";
+        }
+        if (y < 4 || (x == 2 && y < 6)) {
+         output += "--";
+        }       
+        else {
+             output += "  ";
+         } 
       }
       else if (y == 5 && (x == 0 || x == 4)) {
              output += "    ";
@@ -273,9 +299,8 @@ public class Board {
       else if (x == 3)
         output += "\n | / | \\ | / | \\ |     \\ |\n";
     }
-      
+      */
       return output;       
-  
   }
   
 
